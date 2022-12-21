@@ -11,7 +11,7 @@ namespace Todo.EntityModelMappers.TodoLists
         {
             var items = todoList.Items
                 .Select(TodoItemSummaryViewmodelFactory.Create)
-                .OrderBy(item => item.Importance)
+                .OrderBy(item => item.IsDone).ThenBy(item => item.Importance)
                 .ToList();
             return new TodoListDetailViewmodel(todoList.TodoListId, todoList.Title, items);
         }
