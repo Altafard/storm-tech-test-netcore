@@ -14,7 +14,7 @@ namespace Todo.Models.TodoItems
 
         public TodoItemEditFields() { }
 
-        public TodoItemEditFields(int todoListId, string todoListTitle, int todoItemId, string title, bool isDone, string responsiblePartyId, Importance importance)
+        public TodoItemEditFields(int todoListId, string todoListTitle, int todoItemId, string title, bool isDone, string responsiblePartyId, Importance importance = Importance.Medium)
         {
             TodoListId = todoListId;
             TodoListTitle = todoListTitle;
@@ -22,7 +22,7 @@ namespace Todo.Models.TodoItems
             Title = title;
             IsDone = isDone;
             ResponsiblePartyId = responsiblePartyId;
-            Importance = Importance.Medium;
+            Importance = importance;
         }
     }
 }
