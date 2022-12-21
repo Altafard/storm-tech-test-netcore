@@ -10,7 +10,12 @@
 <h2>@ViewData["Title"]</h2>
 
 <div class="col-md-6">
-
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" id="hideCompletedListItemsId" /> Hide completed
+        </label>
+    </div>
+    
     <ul class="list-group">
 
         <li class="list-group-item">
@@ -35,7 +40,7 @@
                     break;
             }
 
-            <li class="list-group-item @contextualClass">
+            <li class="list-group-item @contextualClass @(item.IsDone ? "item-done" : string.Empty)">
                 
                 <div class="row">
 
@@ -67,3 +72,14 @@
         }
     </ul>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('input[id="hideCompletedListItemsId"]').click(function() {
+                if (this.checked) $(".item-done").addClass("hidden");
+                else $(".item-done").removeClass("hidden");
+            });
+        });
+    </script>
+}
