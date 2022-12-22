@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,8 @@ using Todo.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Todo.Services.Gravatar;
 
 namespace Todo
 {
@@ -45,6 +48,18 @@ namespace Todo
                     .RequireAuthenticatedUser()
                     .Build();
             });
+
+            services.AddMemoryCache();
+            services.Configure<GravatarOptions>(Configuration.GetSection("Gravatar"));
+            services.AddHttpClient<IGravatarClient, GravatarClient>((provider, client) =>
+            {
+                var options = provider.GetService<IOptions<GravatarOptions>>();
+                if (options == null)
+                    throw new InvalidOperationException("Cannot configure gravatar client: options not found.");
+                client.BaseAddress = new Uri(options.Value.Url);
+                client.Timeout = TimeSpan.FromSeconds(options.Value.Timeout);
+                client.DefaultRequestHeaders.Add("User-Agent", "Server");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +83,8 @@ namespace Todo
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseGravatar();
 
             app.UseEndpoints(endpoints =>
             {
