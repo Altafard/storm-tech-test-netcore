@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Todo.Data;
 using Todo.Data.Entities;
 using Todo.EntityModelMappers.TodoLists;
@@ -16,11 +17,13 @@ namespace Todo.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IUserStore<IdentityUser> userStore;
+        private readonly IMemoryCache _cache;
 
-        public TodoListController(ApplicationDbContext dbContext, IUserStore<IdentityUser> userStore)
+        public TodoListController(ApplicationDbContext dbContext, IUserStore<IdentityUser> userStore, IMemoryCache cache)
         {
             this.dbContext = dbContext;
             this.userStore = userStore;
+            _cache = cache;
         }
 
         public IActionResult Index()
@@ -33,8 +36,9 @@ namespace Todo.Controllers
 
         public IActionResult Detail(int todoListId)
         {
+            var userName = _cache.Get<string>(User.Identity!.Name);
             var todoList = dbContext.SingleTodoList(todoListId);
-            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList);
+            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, userName);
             return View(viewmodel);
         }
 

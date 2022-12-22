@@ -7,10 +7,10 @@ namespace Todo.EntityModelMappers.TodoLists
 {
     public static class TodoListDetailViewmodelFactory
     {
-        public static TodoListDetailViewmodel Create(TodoList todoList)
+        public static TodoListDetailViewmodel Create(TodoList todoList, string userName)
         {
             var items = todoList.Items
-                .Select(TodoItemSummaryViewmodelFactory.Create)
+                .Select(item => TodoItemSummaryViewmodelFactory.Create(item, userName))
                 .OrderBy(item => item.IsDone).ThenBy(item => item.Importance)
                 .ToList();
             return new TodoListDetailViewmodel(todoList.TodoListId, todoList.Title, items);
